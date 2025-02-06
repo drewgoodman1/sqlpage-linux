@@ -1,37 +1,28 @@
 -- 🏷️ Define the Page Title
-SELECT 'title' AS component, 'My Disc Golf Bag' AS title;
+SELECT 'title' AS component, 
+    (CASE WHEN $disc_id IS NULL THEN 'Add a New Disc' ELSE 'Edit Disc' END) AS title;
 
--- 📋 Define a List Layout
-SELECT 'list' AS component, 3 AS columns, 'No discs found' AS empty_title;
-
--- 🎴 Define Each Disc as an Individual Card with Links for Actions
+-- 📝 Fetch Existing Data If Editing
 SELECT 
-    d.name AS title,
-    'Brand: ' || b.brand_name || E'\n\n' ||
-    'Type: ' || t.type_name || E'\n\n' ||
-    'Speed: ' || s.value || E'\n' ||
-    'Glide: ' || g.value || E'\n' ||
-    'Turn: ' || tr.value || E'\n' ||
-    'Fade: ' || f.value AS description_md,
+    id AS Disc_ID, 
+    name AS Disc_Name,  
+    brand_id::text AS Disc_Brand,  
+    type_id::text AS Disc_Type,
+    speed_id::text AS Speed,
+    glide_id::text AS Glide,
+    turn_id::text AS Turn,
+    fade_id::text AS Fade
+FROM discs 
+WHERE id = $disc_id::int;
 
-    'edit_disc.sql?disc_id=' || d.id AS edit_link,   -- ✅ Edit link points to edit_disc.sql
-    'delete_disc.sql?disc_id=' || d.id AS delete_link  -- ✅ Delete link points to delete_disc.sql
-
-FROM discs d
-JOIN brands b ON d.brand_id = b.id
-JOIN disc_types t ON d.type_id = t.id
-JOIN flight_numbers s ON d.speed_id = s.id AND s.category = 'Speed'
-JOIN flight_numbers g ON d.glide_id = g.id AND g.category = 'Glide'
-JOIN flight_numbers tr ON d.turn_id = tr.id AND tr.category = 'Turn'
-JOIN flight_numbers f ON d.fade_id = f.id AND f.category = 'Fade';
-
--- 🚀 **Add or Edit Disc Form** (Handles both adding and editing)
+-- 🏷️ Define the Form
 SELECT 'form' AS component, 
-    'Add or Edit a Disc' AS title, 
-    'edit_disc.sql' AS action;  -- ✅ Form always loads edit_disc.sql
+    (CASE WHEN $disc_id IS NULL THEN 'Add a New Disc' ELSE 'Edit Disc' END) AS title, 
+    (CASE WHEN $disc_id IS NULL THEN 'submit_disc.sql' ELSE 'update_disc.sql' END) AS action;
 
--- 📝 Define Input Fields
-SELECT 'Disc_Name' AS name, 'text' AS type, 'Disc Name' AS label, TRUE AS required;
+-- 📝 Define Input Fields (Prefill values when editing)
+SELECT 'Disc_Name' AS name, 'text' AS type, 'Disc Name' AS label, TRUE AS required, 
+    COALESCE((SELECT name FROM discs WHERE id = $disc_id::int), '') AS value;
 
 SELECT 'Disc_Brand' AS name, 'select' AS type, 'Select a brand' AS label, TRUE AS required,
     jsonb_agg(jsonb_build_object('value', id::text, 'label', brand_name)) AS options
