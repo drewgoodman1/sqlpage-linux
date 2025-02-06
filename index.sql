@@ -25,6 +25,7 @@ JOIN flight_numbers g ON d.glide_id = g.id AND g.category = 'Glide'
 JOIN flight_numbers tr ON d.turn_id = tr.id AND tr.category = 'Turn'
 JOIN flight_numbers f ON d.fade_id = f.id AND f.category = 'Fade';
 
+
 -- 🚀 **Add or Edit Disc Form** (Handles both adding and editing)
 SELECT 'form' AS component, 
     'Add or Edit a Disc' AS title, 
@@ -59,3 +60,24 @@ FROM flight_numbers WHERE category = 'Fade';
 
 -- ✅ Submit Button
 SELECT 'Submit' AS validate, 'blue' AS validate_color;
+
+-- 📊 Scatter Plot for Disc Flight Characteristics
+SELECT 
+    'chart' AS component,
+    'Disc Flight Analysis' AS title,
+    'scatter' AS type,
+    'Turn - Fade' AS xtitle,
+    'Speed' AS ytitle,
+    500 AS height,
+    6 AS marker;  -- Controls dot size
+
+-- 🎯 Plot All Discs with Unique Colors & Hover Labels
+SELECT 
+    d.name AS series,  -- Each disc has a unique color
+    (f_turn.value - f_fade.value) AS x,  -- X-axis: Turn - Fade
+    f_speed.value AS y,  -- Y-axis: Speed
+    d.name AS label  -- Show disc name on hover
+FROM discs d
+JOIN flight_numbers f_speed ON d.speed_id = f_speed.id AND f_speed.category = 'Speed'
+JOIN flight_numbers f_turn ON d.turn_id = f_turn.id AND f_turn.category = 'Turn'
+JOIN flight_numbers f_fade ON d.fade_id = f_fade.id AND f_fade.category = 'Fade';
