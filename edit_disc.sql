@@ -1,28 +1,27 @@
--- 🏷️ Define the Page Title
-SELECT 'title' AS component, 
-    (CASE WHEN $disc_id IS NULL THEN 'Add a New Disc' ELSE 'Edit Disc' END) AS title;
 
--- 📝 Fetch Existing Data If Editing
+SELECT 'title' AS component, 'Edit Disc' AS title;
+
+
 SELECT 
-    id AS Disc_ID, 
+    id AS Disc_ID,
     name AS Disc_Name,  
     brand_id::text AS Disc_Brand,  
     type_id::text AS Disc_Type,
-    speed_id::text AS Speed,
-    glide_id::text AS Glide,
-    turn_id::text AS Turn,
-    fade_id::text AS Fade
+    speed AS Speed,
+    glide AS Glide,
+    turn AS Turn,
+    fade AS Fade
 FROM discs 
 WHERE id = $disc_id::int;
 
--- 🏷️ Define the Form
-SELECT 'form' AS component, 
-    (CASE WHEN $disc_id IS NULL THEN 'Add a New Disc' ELSE 'Edit Disc' END) AS title, 
-    (CASE WHEN $disc_id IS NULL THEN 'submit_disc.sql' ELSE 'update_disc.sql' END) AS action;
 
--- 📝 Define Input Fields (Prefill values when editing)
+SELECT 'form' AS component, 
+    'Edit Disc' AS title, 
+    'update_disc.sql?disc_id=' || $disc_id AS action;
+
+
 SELECT 'Disc_Name' AS name, 'text' AS type, 'Disc Name' AS label, TRUE AS required, 
-    COALESCE((SELECT name FROM discs WHERE id = $disc_id::int), '') AS value;
+    (SELECT name FROM discs WHERE id = $disc_id::int) AS value;
 
 SELECT 'Disc_Brand' AS name, 'select' AS type, 'Select a brand' AS label, TRUE AS required,
     jsonb_agg(jsonb_build_object('value', id::text, 'label', brand_name)) AS options
@@ -32,21 +31,17 @@ SELECT 'Disc_Type' AS name, 'select' AS type, 'Select disc type' AS label, TRUE 
     jsonb_agg(jsonb_build_object('value', id::text, 'label', type_name)) AS options
 FROM disc_types;
 
-SELECT 'Speed' AS name, 'select' AS type, 'Select speed' AS label, TRUE AS required,
-    jsonb_agg(jsonb_build_object('value', id::text, 'label', value)) AS options
-FROM flight_numbers WHERE category = 'Speed';
+SELECT 'Speed' AS name, 'number' AS type, 'Speed (1-14)' AS label, TRUE AS required, 1 AS min, 14 AS max,
+    (SELECT speed FROM discs WHERE id = $disc_id::int) AS value;
 
-SELECT 'Glide' AS name, 'select' AS type, 'Select glide' AS label, TRUE AS required,
-    jsonb_agg(jsonb_build_object('value', id::text, 'label', value)) AS options
-FROM flight_numbers WHERE category = 'Glide';
+SELECT 'Glide' AS name, 'number' AS type, 'Glide (1-7)' AS label, TRUE AS required, 1 AS min, 7 AS max,
+    (SELECT glide FROM discs WHERE id = $disc_id::int) AS value;
 
-SELECT 'Turn' AS name, 'select' AS type, 'Select turn' AS label, TRUE AS required,
-    jsonb_agg(jsonb_build_object('value', id::text, 'label', value)) AS options
-FROM flight_numbers WHERE category = 'Turn';
+SELECT 'Turn' AS name, 'number' AS type, 'Turn (-5 to 1)' AS label, TRUE AS required, -5 AS min, 1 AS max,
+    (SELECT turn FROM discs WHERE id = $disc_id::int) AS value;
 
-SELECT 'Fade' AS name, 'select' AS type, 'Select fade' AS label, TRUE AS required,
-    jsonb_agg(jsonb_build_object('value', id::text, 'label', value)) AS options
-FROM flight_numbers WHERE category = 'Fade';
+SELECT 'Fade' AS name, 'number' AS type, 'Fade (0-5)' AS label, TRUE AS required, 0 AS min, 5 AS max,
+    (SELECT fade FROM discs WHERE id = $disc_id::int) AS value;
 
--- ✅ Submit Button
+
 SELECT 'Submit' AS validate, 'blue' AS validate_color;
