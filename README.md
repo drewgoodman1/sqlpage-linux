@@ -24,35 +24,7 @@ set -o allexport; source .env; set +o allexport
 
 ## 2. Docker Setup for PostgreSQL and pgAdmin
 
-The repository includes a `docker-compose.yml` file that defines the following services:
-
-~~~yaml
-services:
-  postgres:
-    image: postgres:latest
-    container_name: sqlpage-postgres
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    container_name: sqlpage-pgadmin
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
-      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
-    ports:
-      - "5050:80"
-    depends_on:
-      - postgres
-
-volumes:
-  pgdata:
-~~~
+The repository includes a `docker-compose.yml` configuration file.
 
 ### Starting the Docker Containers
 
