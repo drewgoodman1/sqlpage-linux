@@ -12,6 +12,7 @@ POSTGRES_USER=kirkgibson
 POSTGRES_PASSWORD=dodgers
 PGADMIN_DEFAULT_EMAIL=vinscully@greatest.com
 PGADMIN_DEFAULT_PASSWORD=homerun
+DATABASE_URL=postgres://kirkgibson:dodgers@localhost:5432/postgres
 ~~~
 
 > **Important:** Add `.env` to your `.gitignore` so that these sensitive credentials are not committed.
@@ -57,6 +58,8 @@ Make sure `sqlpage.json` is in the repository root with the following content:
 {
   "database_url": "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/postgres"
 }
+
+*** I'm not exactly sure how SQL page is using this file - we are currently using the .env variable DATABASE_URL when SQL Page launches
 ~~~
 
 ### Running SQLPage
