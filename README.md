@@ -59,7 +59,7 @@ Make sure `sqlpage.json` is in the repository root with the following content:
   "database_url": "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:5432/postgres"
 }
 
-*** I'm not exactly sure how SQL page is using this file - we are currently using the .env variable DATABASE_URL when SQL Page launches
+*** We are using our .env variable to overide the config file here - SQL Page is giving me some difficulties creating a sqlite db by default.
 ~~~
 
 ### Running SQLPage
