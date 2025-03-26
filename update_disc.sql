@@ -1,4 +1,4 @@
--- 🚀 Ensure Update Only Runs When Form is Submitted
+
 UPDATE discs 
 SET 
     name = :Disc_Name, 
