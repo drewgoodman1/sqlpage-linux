@@ -10,5 +10,5 @@ SET
     fade = :Fade::INTEGER
 WHERE id = $disc_id::int;
 
--- ✅ Redirect Before Any Other Output
+
 SELECT 'redirect' AS component, 'index.sql' AS link;
